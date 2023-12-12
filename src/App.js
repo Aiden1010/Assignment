@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import "./App.css";
 import Character from "./components/Character/Character";
 import Pagination from "./components/Pagination/Pagination";
-import { useDebounce } from "use-debounce";
 
 function App() {
+  const [originalCharactersList, setOriginalCharactersList] = useState([]);
   const [charactersList, setCharactersList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -14,24 +14,17 @@ function App() {
   const itemsPerPage = 20;
   const dropDownOptions = ["All", "Alive", "Dead", "Unknown"];
 
-  // Used debounce to handle search input, preventing multiple API calls for each keystroke
-  const [debouncedValue] = useDebounce(searchInput, 500);
+  useEffect(() => {
+    retrieveCharacters(pageNo);
+  }, [pageNo]);
 
   useEffect(() => {
-    retrieveCharacters(pageNo, searchInput, selectedOption);
-  }, [pageNo, debouncedValue, selectedOption]);
+    setCharactersList(originalCharactersList);
+  }, [originalCharactersList]);
 
-  const retrieveCharacters = async (page, searchValue, status) => {
+  const retrieveCharacters = async (page) => {
     setLoading(true);
     let url = `https://rickandmortyapi.com/api/character/?page=${page}`;
-
-    if (searchValue) {
-      url += `&name=${searchValue}`;
-    }
-
-    if (status !== "All") {
-      url += `&status=${status.toLowerCase()}`;
-    }
     console.log(url);
     await fetch(url)
       .then((response) => response.json())
@@ -46,6 +39,7 @@ function App() {
           const pages = Math.ceil(totalCount / itemsPerPage);
           setTotalPages(pages);
           setCharactersList(data.results);
+          setOriginalCharactersList(data.results);
         }
         setLoading(false);
       })
@@ -55,8 +49,24 @@ function App() {
       });
   };
 
+  const filteredCharacters = useMemo(() => {
+    return originalCharactersList.filter(
+      (character) =>
+        character.name.toLowerCase().includes(searchInput.toLowerCase()) &&
+        (selectedOption === "All" ||
+          character.status.toLowerCase() === selectedOption.toLowerCase())
+    );
+  }, [originalCharactersList, searchInput, selectedOption]);
+
+  useEffect(() => {
+    setCharactersList(filteredCharacters);
+  }, [filteredCharacters]);
+
   const handleSearch = (searchValue) => {
     setSearchInput(searchValue);
+    if (searchValue === "") {
+      setCharactersList(originalCharactersList);
+    }
   };
 
   const handleDropdownChange = (e) => {

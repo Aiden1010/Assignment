@@ -40,6 +40,7 @@ function App() {
         if (data.error) {
           setCharactersList([]);
           setTotalPages(0);
+          setPageNo(1);
         } else {
           const totalCount = data.info.count;
           const pages = Math.ceil(totalCount / itemsPerPage);

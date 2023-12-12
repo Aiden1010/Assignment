@@ -13,16 +13,37 @@ const Pagination = ({ loading, pageNo, setPageNo, totalPages }) => {
     }
   };
 
+  const goToFirstPage = () => {
+    if (pageNo !== 1) {
+      setPageNo(1);
+    }
+  };
+
+  const goToLastPage = () => {
+    if (pageNo !== totalPages) {
+      setPageNo(totalPages);
+    }
+  };
+
   return (
     <div className="pagination">
+      <button onClick={goToFirstPage} disabled={pageNo === 1 || loading}>
+        &lt;&lt;
+      </button>
       <button onClick={prevPage} disabled={pageNo === 1 || loading}>
-        Previous
+        &lt;
       </button>
       <span>
         Page {pageNo} of {totalPages}
       </span>
       <button onClick={nextPage} disabled={pageNo === totalPages || loading}>
-        Next
+        &gt;
+      </button>
+      <button
+        onClick={goToLastPage}
+        disabled={pageNo === totalPages || loading}
+      >
+        &gt;&gt;
       </button>
     </div>
   );

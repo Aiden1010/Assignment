@@ -1,0 +1,50 @@
+.character-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  max-width: 300px;
+}
+
+.character-card img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.character-details {
+  flex-grow: 1;
+}
+
+.character-details h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.character-details p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .character-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .character-card {
+    max-width: none;
+  }
+
+  .character-card img {
+    width: 80px;
+    height: 80px;
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
